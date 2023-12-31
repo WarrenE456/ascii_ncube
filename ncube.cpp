@@ -161,6 +161,7 @@ static void draw_line(double x1, double y1, double x2, double y2, char* screen, 
     return;
 }
 
+// appends all n x 1 purmutations of -.5 and .5 to verts
 static void bianary_purmutations(vector<vector<vector<double>>>& verts, int n) {
     int p = 1 << n;
     for (int i = 0; i < p; i++) {
