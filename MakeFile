@@ -1,2 +1,2 @@
 ncube.exe: ncube.cpp
-	clang++ -std=c++17 -m64 ncube.cpp -o ncube.exe
+	clang++ ncube.cpp -o ncube.exe

@@ -15,8 +15,7 @@ static void draw_line(double x1, double y1, double x2, double y2, char* screen, 
 static void bianary_purmutations(vector<vector<vector<double>>>& verts, int n);
 
 const char CLEAR = ' ', DRAW = '*'; // clear and draw character
-const double T = .1; // rotation amount on every axis
-const double CAMERA_DISTANCE = 1.25; // distance camera is away from cube
+const double T = .05; // rotation amount on every axis
 
 int main(void) {
     // get the resulotion from the user
@@ -49,12 +48,14 @@ int main(void) {
         std::cout << "Enter dimension count: ";
         std::cin >> temp_s;
         temp_i = std::atoi(temp_s.c_str());
-        if (temp_i >= 2) {
+        if (temp_i >= 3) {
             n = temp_i;
             break;
         }
-        std::cout << "\nDimension count must be atleast 2.\n";
+        std::cout << "\nDimension count must be atleast 3.\n";
     }
+    // calculate camera distance
+    double camera_distance = std::sqrt(n/4)/6 + 1.25;
     // initlaize the rotation matrix;
     vector<vector<double>> I(n, vector<double>(n, 0));
     for (int i = 0; i < n; i++) I[i][i] = 1;  
@@ -104,8 +105,12 @@ int main(void) {
         }
         // draw all the lines to the screen
         for (auto i : line_indicies) {
-            double z1 = (verts[i[0]][2][0] + CAMERA_DISTANCE);
-            double z2 = (verts[i[1]][2][0] + CAMERA_DISTANCE);
+            double z1 = 1;
+            double z2 = 1;
+            for (int j = 0; j < n - 2; j++) {
+                z1 *= (verts[i[0]][2 + j][0] + camera_distance);
+                z2 *= (verts[i[1]][2 + j][0] + camera_distance);
+            }
             draw_line((verts[i[0]][0][0] / z1 + 1) / 2 * width, (verts[i[0]][1][0] / z1 + 1) / 2 * height, // x1, y1
                       (verts[i[1]][0][0] / z2 + 1) / 2 * width, (verts[i[1]][1][0] /z2 + 1) / 2 * height, // x2, y2
                       screen, width, height);
@@ -114,7 +119,7 @@ int main(void) {
         std::system("CLS");
 
         // transform verticies
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < verts.size(); i++) {
             verts[i] = matmul(R, verts[i]);
         }
         // print the screen to the terminal
