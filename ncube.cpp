@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <string>
+#include <thread>
+#include <chrono>
 
 using std::vector;
 using std::array;
@@ -53,10 +55,24 @@ int main(void) {
         }
         std::cout << "\nDimension count must be atleast 3.\n";
     }
+    int sleep_time_ms;
+    // get sleep time per frame from user
+    while (true) {
+        std::cout << "Enter sleep time per frame (ms): ";
+        std::cin >> temp_s;
+        temp_i = std::atoi(temp_s.c_str());
+        if (temp_i >= 0) {
+            sleep_time_ms = temp_i;
+            break;
+        }
+        std::cout << "\nSleep time can not be negative.\n";
+    }
     // get the rotation per frame from the user
-    std::cout << "Enter rotation amount per frame (this should be a small number ~< 1): ";
+    std::cout << "Enter rotation amount per frame (this should be a small number < 1): ";
     std::cin >> temp_s;
     double t = std::atof(temp_s.c_str());
+
+
     // calculate camera distance
     double camera_distance = std::sqrt(n/4)/6 + 1.25;
     // initlaize the rotation matrix;
@@ -83,7 +99,7 @@ int main(void) {
         for (int j = i + 1; j < verts.size(); j++) {
             double len = 0;
             for (int k = 0; k < n; k++) {
-                len += abs(verts[i][k][0] - verts[j][k][0]);
+                len += std::abs(verts[i][k][0] - verts[j][k][0]);
             }
             if (std::round(len) == 1) line_indicies.push_back({i, j});
         }
@@ -127,6 +143,10 @@ int main(void) {
         }
         // print the screen to the terminal
         std::cout << screen << std::flush;
+
+        if (sleep_time_ms > 0) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time_ms));
+        }
     }
     return 0;
 }
